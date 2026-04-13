@@ -29,6 +29,9 @@ const features = [
   },
 ];
 
+const FEATURE_CARD_IMAGE =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Upscaled%20Image%20%2812%29-ng3RrNnsPMJ5CrtOjcPTmhHg01W11q.png";
+
 // Floating dot particles visualization
 function ParticleVisualization({ trackingRef }: { trackingRef: React.RefObject<HTMLDivElement | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -141,7 +144,7 @@ function ParticleVisualization({ trackingRef }: { trackingRef: React.RefObject<H
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 pointer-events-auto"
+      className="absolute inset-0 z-[2] pointer-events-auto"
       style={{ width: "100%", height: "100%" }}
     />
   );
@@ -227,41 +230,58 @@ export function FeaturesSection() {
         <div className="grid lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Large feature card */}
           <div 
-            className={`lg:col-span-12 relative bg-black border border-foreground/10 min-h-[500px] overflow-hidden group transition-all duration-700 flex ${
+            className={`lg:col-span-12 relative bg-black border border-foreground/10 min-h-0 lg:min-h-[500px] overflow-hidden group transition-all duration-700 flex flex-col lg:flex-row ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
             }`}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* Left: text content */}
-            <div ref={particlesTrackingRef} className="relative flex-1 p-8 lg:p-12 bg-black">
+            {/* Left: text content (mobile: imagem de fundo só no topo) */}
+            <div ref={particlesTrackingRef} className="relative flex-1 min-h-0 bg-black min-w-0 overflow-hidden">
+              <div className="lg:hidden pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(72vw,320px)]">
+                <img
+                  src={FEATURE_CARD_IMAGE}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover object-[center_20%] transition-all duration-700"
+                  style={{
+                    transform: `scaleX(-1) scale(${1 + activeFeature * 0.03})`,
+                    filter: `brightness(${0.85 + activeFeature * 0.03}) saturate(${1 + activeFeature * 0.08})`,
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/70 to-black" />
+              </div>
+
               <ParticleVisualization trackingRef={particlesTrackingRef} />
-              <div className="relative z-10 min-h-[min(28rem,58svh)] sm:min-h-[22rem] lg:min-h-[360px] pb-2">
-                {features.map((feature, index) => (
+              <div className="relative z-10 flex flex-col px-8 pt-8 pb-4 lg:min-h-[360px] lg:p-12">
+                {features.map((feature, index) => {
+                  const isActive = index === activeFeature;
+                  return (
                   <article
                     key={feature.number}
-                    className={`absolute inset-0 flex flex-col transition-all duration-700 ease-out ${
-                      index === activeFeature
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 translate-y-6 pointer-events-none"
+                    className={`flex flex-col min-h-0 transition-all duration-700 ease-out ${
+                      isActive
+                        ? "relative z-10 opacity-100 translate-y-0 lg:absolute lg:inset-0"
+                        : "max-lg:hidden opacity-0 translate-y-6 pointer-events-none lg:absolute lg:inset-0"
                     }`}
                   >
-                    <span className="font-mono text-sm text-muted-foreground">{feature.number}</span>
-                    <h3 className="text-3xl lg:text-4xl font-display mt-4 mb-6 group-hover:translate-x-2 transition-transform duration-500">
+                    <span className="font-mono text-sm text-muted-foreground shrink-0">{feature.number}</span>
+                    <h3 className="text-3xl lg:text-4xl font-display mt-4 mb-4 sm:mb-6 shrink-0 group-hover:translate-x-2 transition-transform duration-500">
                       {feature.title}
                     </h3>
-                    <p className="text-lg text-muted-foreground leading-relaxed max-w-md mb-6 sm:mb-8 flex-1 min-h-0">
+                    <p className="text-lg text-muted-foreground leading-relaxed max-w-md mb-6 sm:mb-8 max-lg:shrink-0 lg:flex-1 lg:min-h-0">
                       {feature.description}
                     </p>
-                    <div className="mt-auto shrink-0 pt-4 border-t border-foreground/10">
+                    <div className="shrink-0 pt-4 border-t border-foreground/10 mt-6 lg:mt-auto">
                       <span className="text-5xl lg:text-6xl font-display">{feature.stats.value}</span>
                       <span className="block text-sm text-muted-foreground font-mono mt-2">{feature.stats.label}</span>
                     </div>
                   </article>
-                ))}
+                  );
+                })}
               </div>
 
-              <div className="relative z-10 mt-6 sm:mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-foreground/10 pt-6">
+              <div className="relative z-10 px-8 pb-8 lg:px-12 lg:pb-12 mt-6 sm:mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-foreground/10 pt-6">
                 <div className="grid grid-cols-4 w-full sm:w-auto sm:flex sm:flex-nowrap gap-1.5 sm:gap-2 min-w-0">
                   {features.map((feature, index) => {
                     const isActive = index === activeFeature;
@@ -305,10 +325,10 @@ export function FeaturesSection() {
               </div>
             </div>
 
-            {/* Right: mirrored image, full height */}
-            <div className="hidden lg:block relative w-[42%] shrink-0 overflow-hidden">
+            {/* Right: mirrored image (desktop only — mobile usa fundo no topo da coluna esquerda) */}
+            <div className="hidden lg:block relative w-[42%] shrink-0 overflow-hidden lg:min-h-[500px]">
               <img
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Upscaled%20Image%20%2812%29-ng3RrNnsPMJ5CrtOjcPTmhHg01W11q.png"
+                src={FEATURE_CARD_IMAGE}
                 alt=""
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-all duration-700"
@@ -317,9 +337,8 @@ export function FeaturesSection() {
                   filter: `brightness(${0.9 + activeFeature * 0.03}) saturate(${1 + activeFeature * 0.08})`,
                 }}
               />
-              {/* Fade left edge into black */}
               <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
-              <div className="absolute right-6 bottom-6 left-6">
+              <div className="absolute right-4 bottom-4 left-4 sm:right-6 sm:bottom-6 sm:left-6">
                 <div className="flex items-center justify-between text-xs font-mono text-foreground/80 mb-3">
                   <span>{features[activeFeature].number}</span>
                   <span>{activeFeature + 1}/{features.length}</span>
