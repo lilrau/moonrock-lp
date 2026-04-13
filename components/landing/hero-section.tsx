@@ -58,7 +58,7 @@ function BlurWord({ word, trigger }: { word: string; trigger: number }) {
       framesRef.current.forEach(cancelAnimationFrame);
       timersRef.current.forEach(clearTimeout);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
 
   // gradient colours cycling across letter positions
@@ -129,7 +129,7 @@ export function HeroSection() {
           loop
           playsInline
           aria-hidden="true"
-          className="w-full h-full object-cover object-center opacity-80"
+          className="w-full h-full object-cover opacity-80 object-[70%_center] sm:object-[58%_center] lg:object-[52%_center]"
         >
           <source src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bg-hero-0BnFGdr81Ifnj3WbBZoNt1KE4D5DMT.mp4" type="video/mp4" />
         </video>
@@ -163,45 +163,42 @@ export function HeroSection() {
           />
         ))}
       </div>
-      
+
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 py-32 lg:py-40">
         <div className="lg:max-w-[55%]">
-        {/* Eyebrow */}
-        <div 
-          className={`mb-8 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
-          <span className="inline-flex items-center gap-3 text-sm font-mono text-white/60">
-            <span className="w-8 h-px bg-white/30" />
-            Automações e softwares inteligentes para o futuro da sua empresa
-          </span>
-        </div>
-        
-        {/* Main headline */}
-        <div className="mb-12">
-          <h1 
-            className={`text-left text-[clamp(2rem,6vw,7rem)] font-display leading-[0.92] tracking-tight text-white transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <span className="block whitespace-nowrap">Soluções digitais</span>
-            <span className="block whitespace-nowrap">
-              que{" "}
-              <span className="relative inline-block">
-                <BlurWord word={words[wordIndex]} trigger={wordIndex} />
+
+          {/* Main headline */}
+          <div className="mb-12">
+            <h1
+              className={`text-left text-[clamp(2rem,6vw,7rem)] font-display leading-[0.92] tracking-tight text-white transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+            >
+              <span className="block whitespace-nowrap">Soluções digitais</span>
+              <span className="block whitespace-nowrap">
+                que{" "}
+                <span className="relative inline-block">
+                  <BlurWord word={words[wordIndex]} trigger={wordIndex} />
+                </span>
               </span>
+            </h1>
+          </div>
+          {/* Eyebrow */}
+          <div
+            className={`mb-8 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+          >
+            <span className="inline-flex items-center gap-3 text-sm font-mono text-white/60">
+              <span className="w-8 h-px bg-white/30" />
+              Automações e softwares inteligentes para o futuro da sua empresa
             </span>
-          </h1>
-        </div>
+          </div>
         </div>
       </div>
-      
+
       {/* Stats — 3 metrics static, no auto-scroll */}
-      <div 
-        className={`absolute bottom-12 left-0 right-0 px-6 lg:px-12 transition-all duration-700 delay-500 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
+      <div
+        className={`absolute bottom-12 left-0 right-0 px-6 lg:px-12 transition-all duration-700 delay-500 ${isVisible ? "opacity-100" : "opacity-0"
+          }`}
       >
         <div className="max-w-[1400px] mx-auto flex items-start gap-10 lg:gap-20">
           {[

@@ -19,7 +19,7 @@ const features = [
 
 export function DevelopersSection() {
   const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLSection>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,16 +73,16 @@ export function DevelopersSection() {
           </h2>
         </div>
 
-        {/* Description + Features — left half only */}
+        {/* Description + Features — full width on small screens, half on large (image on right) */}
         <div
-          className={`max-w-[50%] transition-all duration-700 delay-100 ${
+          className={`w-full max-w-2xl mx-auto text-center sm:text-left lg:mx-0 lg:max-w-[50%] transition-all duration-700 delay-100 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <p className="text-xl text-muted-foreground mb-12 leading-relaxed max-w-md">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-10 sm:mb-12 leading-relaxed max-w-none sm:max-w-xl lg:max-w-md">
             Sua empresa merece a melhor tecnologia do mercado. Nossas soluções são construídos do zero para serem rápidas, confiáveis e fáceis de usar. Diga adeus a planilhas confusas e processos humanos lentos.
           </p>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 max-w-xl mx-auto sm:mx-0 lg:max-w-none">
             {features.map((feature, index) => (
               <div
                 key={feature.title}

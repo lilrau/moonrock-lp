@@ -4,6 +4,49 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { globalLenis } from "@/components/smooth-scroll-provider";
+import {
+  beginAnchorScrollSuppression,
+  endAnchorScrollSuppression,
+} from "@/components/section-snap-suppression";
+
+const lenisEasing = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+
+/** Smooth scroll to #id via Lenis (matches site scroll); falls back after a few frames if Lenis is not ready. */
+function scrollToAnchor(href: string): boolean {
+  if (!href.startsWith("#") || href === "#") return false;
+  const el = document.getElementById(decodeURIComponent(href.slice(1)));
+  if (!el) return false;
+  const target = el;
+
+  const options = {
+    offset: -96,
+    duration: 1.25,
+    easing: lenisEasing,
+    onComplete: () => {
+      endAnchorScrollSuppression();
+    },
+  };
+
+  let frames = 0;
+  function tryScroll() {
+    const lenis = globalLenis;
+    if (lenis) {
+      beginAnchorScrollSuppression();
+      lenis.scrollTo(target, options);
+      return;
+    }
+    if (frames++ < 45) {
+      requestAnimationFrame(tryScroll);
+    } else {
+      beginAnchorScrollSuppression();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(endAnchorScrollSuppression, 1100);
+    }
+  }
+  tryScroll();
+  return true;
+}
 
 const navLinks = [
   { name: "Soluções",  href: "#features"      },
@@ -65,6 +108,9 @@ export function Navigation() {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={(e) => {
+                  if (scrollToAnchor(link.href)) e.preventDefault();
+                }}
                 className={`text-sm transition-colors duration-300 relative group ${isScrolled ? "text-foreground/70 hover:text-foreground" : "text-white/70 hover:text-white"}`}
               >
                 {link.name}
@@ -115,7 +161,10 @@ export function Navigation() {
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  if (scrollToAnchor(link.href)) e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`text-5xl font-display text-foreground hover:text-muted-foreground transition-all duration-500 ${
                   isMobileMenuOpen 
                     ? "opacity-100 translate-y-0" 

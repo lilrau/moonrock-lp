@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { globalLenis } from "./smooth-scroll-provider";
+import { isSectionSnapSuppressed } from "./section-snap-suppression";
 
 interface SectionSnapProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export function SectionSnap({ children, className }: SectionSnapProps) {
     function trySnap() {
       const lenis = globalLenis;
       if (!el || !lenis || isSnapping.current) return;
+      if (isSectionSnapSuppressed()) return;
 
       const rect = el.getBoundingClientRect();
       const viewportH = window.innerHeight;
@@ -55,6 +57,7 @@ export function SectionSnap({ children, className }: SectionSnapProps) {
 
     function onLenisScroll({ velocity }: { velocity: number }) {
       if (isSnapping.current) return;
+      if (isSectionSnapSuppressed()) return;
       if (idleTimer.current) clearTimeout(idleTimer.current);
       if (Math.abs(velocity) < 0.08) {
         idleTimer.current = setTimeout(trySnap, 60);

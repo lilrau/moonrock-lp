@@ -236,11 +236,11 @@ export function FeaturesSection() {
             {/* Left: text content */}
             <div ref={particlesTrackingRef} className="relative flex-1 p-8 lg:p-12 bg-black">
               <ParticleVisualization trackingRef={particlesTrackingRef} />
-              <div className="relative z-10 min-h-[340px] lg:min-h-[360px]">
+              <div className="relative z-10 min-h-[min(28rem,58svh)] sm:min-h-[22rem] lg:min-h-[360px] pb-2">
                 {features.map((feature, index) => (
                   <article
                     key={feature.number}
-                    className={`absolute inset-0 transition-all duration-700 ease-out ${
+                    className={`absolute inset-0 flex flex-col transition-all duration-700 ease-out ${
                       index === activeFeature
                         ? "opacity-100 translate-y-0"
                         : "opacity-0 translate-y-6 pointer-events-none"
@@ -250,10 +250,10 @@ export function FeaturesSection() {
                     <h3 className="text-3xl lg:text-4xl font-display mt-4 mb-6 group-hover:translate-x-2 transition-transform duration-500">
                       {feature.title}
                     </h3>
-                    <p className="text-lg text-muted-foreground leading-relaxed max-w-md mb-8">
+                    <p className="text-lg text-muted-foreground leading-relaxed max-w-md mb-6 sm:mb-8 flex-1 min-h-0">
                       {feature.description}
                     </p>
-                    <div>
+                    <div className="mt-auto shrink-0 pt-4 border-t border-foreground/10">
                       <span className="text-5xl lg:text-6xl font-display">{feature.stats.value}</span>
                       <span className="block text-sm text-muted-foreground font-mono mt-2">{feature.stats.label}</span>
                     </div>
@@ -261,8 +261,8 @@ export function FeaturesSection() {
                 ))}
               </div>
 
-              <div className="relative z-10 mt-8 flex items-center justify-between gap-4 border-t border-foreground/10 pt-6">
-                <div className="flex flex-wrap gap-2">
+              <div className="relative z-10 mt-6 sm:mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-foreground/10 pt-6">
+                <div className="grid grid-cols-4 w-full sm:w-auto sm:flex sm:flex-nowrap gap-1.5 sm:gap-2 min-w-0">
                   {features.map((feature, index) => {
                     const isActive = index === activeFeature;
                     return (
@@ -270,7 +270,7 @@ export function FeaturesSection() {
                         key={`feature-tab-${feature.number}`}
                         type="button"
                         onClick={() => goToFeature(index)}
-                        className={`rounded-full border px-4 py-2 text-xs font-mono tracking-wide transition-all duration-300 ${
+                        className={`rounded-full border px-2 py-2 sm:px-4 text-[10px] sm:text-xs font-mono tracking-wide transition-all duration-300 min-w-0 truncate ${
                           isActive
                             ? "border-foreground/60 bg-foreground text-background"
                             : "border-foreground/20 text-muted-foreground hover:border-foreground/40 hover:text-foreground"
@@ -284,7 +284,7 @@ export function FeaturesSection() {
                   })}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center sm:justify-end gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={goToPreviousFeature}

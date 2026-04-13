@@ -92,10 +92,9 @@ export function SecuritySection() {
         {/* Main content */}
         <div className="grid lg:grid-cols-12 gap-6">
           {/* Large visual card */}
-          <div className={`lg:col-span-7 relative p-8 lg:p-12 border border-foreground/10 min-h-[400px] overflow-hidden transition-all duration-700 ${
+          <div className={`lg:col-span-7 relative p-8 pb-24 sm:pb-28 lg:p-12 border border-foreground/10 min-h-[400px] overflow-hidden transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}>
-            {/* Dynamic feature image with cross-fade — desktop only */}
             <div className="absolute inset-0 pointer-events-none items-center justify-end hidden lg:flex">
               {securityFeatures.map((feature, index) => (
                 <img
@@ -114,6 +113,19 @@ export function SecuritySection() {
                 <span className="text-7xl lg:text-8xl font-display">0</span>
                 <span className="block text-muted-foreground mt-2">Incidentes de segurança</span>
               </div>
+            </div>
+
+            {/* Feature image — mobile / tablet: below headline stats; desktop uses absolute layer above */}
+            <div className="relative z-10 mt-8 h-44 sm:h-52 lg:hidden pointer-events-none">
+              {securityFeatures.map((feature, index) => (
+                <img
+                  key={`mobile-${feature.image}`}
+                  src={feature.image}
+                  alt={feature.title}
+                  className="absolute inset-0 mx-auto max-h-full w-full object-contain object-center transition-opacity duration-500"
+                  style={{ opacity: activeFeature === index ? 0.9 : 0 }}
+                />
+              ))}
             </div>
             
             {/* Certification badges */}
