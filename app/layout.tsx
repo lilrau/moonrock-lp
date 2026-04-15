@@ -24,7 +24,12 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'MoonRock - Soluções Técnológicas',
-  description: 'Soluções de IA, infraestrutura e integração para empresas inovadoras. Capacite sua equipe com tecnologia de ponta.'
+  description: 'Soluções de IA, infraestrutura e integração para empresas inovadoras. Capacite sua equipe com tecnologia de ponta.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
