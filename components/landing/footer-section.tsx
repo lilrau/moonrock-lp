@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { globalLenis } from "@/components/smooth-scroll-provider";
 import { buildContactWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const footerLinks = {
@@ -12,16 +13,10 @@ const footerLinks = {
     { name: "Integrações", href: "#integrations" },
   ],
   Developers: [
-    { name: "Documentação", href: "#developers" },
-    { name: "XXX", href: "#" },
-    { name: "XXX", href: "#developers" },
-    { name: "XXX", href: "#" },
+    { name: "Sem vagas disponíveis", href: "#" },
   ],
   Company: [
-    { name: "XXX", href: "#" },
-    { name: "XXX", href: "#" },
-    { name: "XXX", href: "#", badge: "YYY" },
-    { name: "XXX", href: "#" },
+    { name: "Contato", href: "#pricing", badge: "Comece aqui" },
   ],
   Legal: [
     { name: "Privacidade", href: "#" },
@@ -37,8 +32,40 @@ const socialLinks = [
     href: buildWhatsAppUrl(buildContactWhatsAppMessage("uma conversa inicial")),
     newTab: true,
   },
-  { name: "LinkedIn", href: "#" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/moonrock-labs" },
 ];
+
+const lenisEasing = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+
+function scrollToAnchor(href: string): boolean {
+  if (!href.startsWith("#") || href === "#") return false;
+  const el = document.getElementById(decodeURIComponent(href.slice(1)));
+  if (!el) return false;
+  const target = el;
+
+  const options = {
+    offset: -96,
+    duration: 1.25,
+    easing: lenisEasing,
+  };
+
+  let frames = 0;
+  function tryScroll() {
+    const lenis = globalLenis;
+    if (lenis) {
+      lenis.scrollTo(target, options);
+      return;
+    }
+    if (frames++ < 45) {
+      requestAnimationFrame(tryScroll);
+    } else {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  tryScroll();
+  return true;
+}
 
 function AnimatedWaveCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -97,6 +124,14 @@ function AnimatedWaveCanvas() {
 }
 
 export function FooterSection() {
+  function handleAnchorClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    if (!scrollToAnchor(href)) return;
+    event.preventDefault();
+  }
+
   return (
     <footer className="relative bg-black">
       {/* Panoramic banner image */}
@@ -154,6 +189,7 @@ export function FooterSection() {
                     <li key={link.name}>
                       <a
                         href={link.href}
+                        onClick={(event) => handleAnchorClick(event, link.href)}
                         className="text-sm text-white/40 hover:text-white transition-colors inline-flex items-center gap-2"
                       >
                         {link.name}

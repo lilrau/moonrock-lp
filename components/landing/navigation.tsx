@@ -10,11 +10,6 @@ import {
   buildWhatsAppUrl,
   openWhatsAppInNewTab,
 } from "@/lib/whatsapp";
-import {
-  beginAnchorScrollSuppression,
-  endAnchorScrollSuppression,
-} from "@/components/section-snap-suppression";
-
 const lenisEasing = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
 
 /** Smooth scroll to #id via Lenis (matches site scroll); falls back after a few frames if Lenis is not ready. */
@@ -28,25 +23,19 @@ function scrollToAnchor(href: string): boolean {
     offset: -96,
     duration: 1.25,
     easing: lenisEasing,
-    onComplete: () => {
-      endAnchorScrollSuppression();
-    },
   };
 
   let frames = 0;
   function tryScroll() {
     const lenis = globalLenis;
     if (lenis) {
-      beginAnchorScrollSuppression();
       lenis.scrollTo(target, options);
       return;
     }
     if (frames++ < 45) {
       requestAnimationFrame(tryScroll);
     } else {
-      beginAnchorScrollSuppression();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.setTimeout(endAnchorScrollSuppression, 1100);
     }
   }
   tryScroll();
@@ -197,13 +186,6 @@ export function Navigation() {
           }`}
           style={{ transitionDelay: isMobileMenuOpen ? "300ms" : "0ms" }}
           >
-            <Button 
-              variant="outline" 
-              className="flex-1 rounded-full h-14 text-base"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sign in
-            </Button>
             <Button 
               className="flex-1 bg-foreground text-background rounded-full h-14 text-base"
               onClick={() => {

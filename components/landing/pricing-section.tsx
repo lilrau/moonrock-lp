@@ -14,11 +14,13 @@ const plans = [
     description: "Para substituir tarefas manuais",
     price: { monthly: null, annual: null },
     features: [
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla"
+      "Atendimento ao cliente",
+      "Vendas",
+      "Suporte técnico",
+      "Marketing",
+      "Financeiro",
+      "Qualidade",
+      "Segurança",
     ],
     cta: "Falar sobre automação",
     context: "automações",
@@ -29,11 +31,13 @@ const plans = [
     description: "Para resultados de negócio específicos",
     price: { monthly: null, annual: null },
     features: [
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla"
+      "Sistema completo com:",
+      "Estoque",
+      "Funcionários",
+      "Financeiro",
+      "Pedidos",
+      "Relatórios",
+      "Integrações",
     ],
     cta: "Falar com um especialista",
     context: "software sob medida",
@@ -44,11 +48,11 @@ const plans = [
     description: "Para vender, atender e economizar com pessoal.",
     price: { monthly: null, annual: null },
     features: [
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla",
-      "BlaBlaBla"
+      "Atendimento ao cliente",
+      "Vendas",
+      "Suporte técnico",
+      "Marketing",
+      "Financeiro"
     ],
     cta: "Falar sobre agentes",
     context: "agentes de IA",
@@ -150,7 +154,7 @@ export function PricingSection() {
                         <span className="text-muted-foreground text-sm">/month</span>
                       </div>
                     ) : (
-                      <span className="text-4xl font-display">Custom</span>
+                      <span className="text-4xl font-display">Exemplos</span>
                     )}
                     {plan.price.monthly !== null && plan.price.monthly > 0 && (
                       <p className="text-xs text-muted-foreground mt-2 font-mono">

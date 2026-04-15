@@ -34,6 +34,12 @@ const testimonials = [
   },
 ];
 
+/** Deterministic "noise" for the background grid — `Math.random()` would differ on server vs client and break hydration. */
+function quoteGlyphAt(row: number, col: number): string {
+  const v = ((row * 73856093) ^ (col * 19349663)) >>> 0;
+  return (v % 1000) / 1000 > 0.7 ? '"' : " ";
+}
+
 export function TestimonialsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -81,10 +87,8 @@ export function TestimonialsSection() {
     <section ref={sectionRef} className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
       {/* ASCII background pattern */}
       <div className="absolute inset-0 font-mono text-[10px] text-background/[0.02] leading-tight overflow-hidden whitespace-pre select-none">
-        {Array.from({ length: 60 }, (_, i) => 
-          Array.from({ length: 100 }, () => 
-            Math.random() > 0.7 ? '"' : ' '
-          ).join("")
+        {Array.from({ length: 60 }, (_, row) =>
+          Array.from({ length: 100 }, (_, col) => quoteGlyphAt(row, col)).join("")
         ).join("\n")}
       </div>
 
