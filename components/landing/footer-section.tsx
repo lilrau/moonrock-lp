@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { buildContactWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const footerLinks = {
   Product: [
@@ -31,7 +32,11 @@ const footerLinks = {
 
 const socialLinks = [
   { name: "Instagram", href: "#" },
-  { name: "WhatsApp", href: "#" },
+  {
+    name: "WhatsApp",
+    href: buildWhatsAppUrl(buildContactWhatsAppMessage("uma conversa inicial")),
+    newTab: true,
+  },
   { name: "LinkedIn", href: "#" },
 ];
 
@@ -114,7 +119,7 @@ export function FooterSection() {
           <div className="grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-8">
             {/* Brand Column */}
             <div className="col-span-2">
-              <a href="#" className="inline-flex items-center gap-2 mb-6">
+              <a href="/" className="inline-flex items-center gap-2 mb-6">
                 <span className="text-2xl font-display text-white">MOONROCK</span>
                 <span className="text-xs text-white/40 font-mono">TM</span>
               </a>
@@ -129,6 +134,8 @@ export function FooterSection() {
                   <a
                     key={link.name}
                     href={link.href}
+                    target={link.newTab ? "_blank" : undefined}
+                    rel={link.newTab ? "noopener noreferrer" : undefined}
                     className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-1 group"
                   >
                     {link.name}

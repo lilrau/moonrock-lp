@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { globalLenis } from "@/components/smooth-scroll-provider";
 import {
+  buildContactWhatsAppMessage,
+  buildWhatsAppUrl,
+  openWhatsAppInNewTab,
+} from "@/lib/whatsapp";
+import {
   beginAnchorScrollSuppression,
   endAnchorScrollSuppression,
 } from "@/components/section-snap-suppression";
@@ -59,6 +64,12 @@ const navLinks = [
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const openWhatsApp = () => {
+    openWhatsAppInNewTab(buildWhatsAppUrl(
+      buildContactWhatsAppMessage("o projeto da minha empresa")
+    ));
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -124,6 +135,7 @@ export function Navigation() {
             <Button
               size="sm"
               className={`rounded-full transition-all duration-500 ${isScrolled ? "bg-foreground hover:bg-foreground/90 text-background px-4 h-8 text-xs" : "bg-white hover:bg-white/90 text-black px-6"}`}
+              onClick={openWhatsApp}
             >
               Falar com especialista
             </Button>
@@ -194,7 +206,10 @@ export function Navigation() {
             </Button>
             <Button 
               className="flex-1 bg-foreground text-background rounded-full h-14 text-base"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                openWhatsApp();
+              }}
             >
               Falar com especialista
             </Button>
