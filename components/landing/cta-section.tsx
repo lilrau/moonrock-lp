@@ -22,6 +22,22 @@ const TRACKING_KEYS = [
 
 type TrackingKey = (typeof TRACKING_KEYS)[number];
 
+type FireLeadExtra = {
+  source?: string;
+  content_name?: string;
+  lead?: {
+    nome?: string;
+    email?: string;
+    telefone?: string;
+    empresa?: string;
+    vertical?: string;
+  };
+};
+
+type WindowWithLead = Window & {
+  fireLead?: (extra?: FireLeadExtra) => string;
+};
+
 function getCookie(name: string): string {
   const match = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
   return match ? decodeURIComponent(match.pop() || "") : "";
@@ -40,39 +56,6 @@ function syncTrackingCookiesToForm(form: HTMLFormElement) {
     const el = form.querySelector<HTMLInputElement>(`[name="${key}"]`);
     if (el) el.value = getCookie(key);
   }
-}
-
-function pushGtmLeadEvent(
-  eventName: "lead_submit" | "lead_callback_request",
-  eventIdPrefix: string,
-  formData: Record<string, string>
-) {
-  const eventId = `${eventIdPrefix}_${Date.now()}_${Math.random()
-    .toString(36)
-    .slice(2, 9)}`;
-  const win = window as Window & {
-    dataLayer?: Array<Record<string, unknown>>;
-  };
-  win.dataLayer = win.dataLayer || [];
-  win.dataLayer.push({
-    event: eventName,
-    event_id: eventId,
-    brand: "moonrock",
-    lead: {
-      nome: formData.nome,
-      email: formData.email,
-      telefone: formData.telefone,
-      empresa: formData.empresa,
-      vertical: formData.vertical,
-    },
-    utms: {
-      source: formData.utm_source,
-      medium: formData.utm_medium,
-      campaign: formData.utm_campaign,
-      content: formData.utm_content,
-      term: formData.utm_term,
-    },
-  });
 }
 
 export function CtaSection() {
@@ -96,33 +79,6 @@ export function CtaSection() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const captureKeys = [
-      "utm_source",
-      "utm_medium",
-      "utm_campaign",
-      "utm_content",
-      "utm_term",
-      "fbclid",
-      "gclid",
-    ];
-    const expiration = new Date();
-    expiration.setTime(expiration.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-    captureKeys.forEach((key) => {
-      const value = params.get(key);
-      if (!value) return;
-      document.cookie = `${key}=${encodeURIComponent(
-        value
-      )}; expires=${expiration.toUTCString()}; path=/; SameSite=Lax`;
-    });
-
-    const fbclid = params.get("fbclid");
-    if (fbclid) {
-      const fbc = `fb.1.${Date.now()}.${fbclid}`;
-      document.cookie = `_fbc=${fbc}; expires=${expiration.toUTCString()}; path=/; SameSite=Lax`;
-    }
-
     const nextValues = TRACKING_KEYS.reduce((acc, key) => {
       acc[key] = getCookie(key);
       return acc;
@@ -139,7 +95,17 @@ export function CtaSection() {
       new FormData(form).entries()
     ) as Record<string, string>;
 
-    pushGtmLeadEvent("lead_submit", "lead", formData);
+    (window as WindowWithLead).fireLead?.({
+      source: "form_submit",
+      content_name: "form-contato",
+      lead: {
+        nome: formData.nome,
+        email: formData.email,
+        telefone: formData.telefone,
+        empresa: formData.empresa,
+        vertical: formData.vertical,
+      },
+    });
 
     const url = buildWhatsAppUrl(
       buildLeadWhatsAppMessage({
@@ -161,7 +127,18 @@ export function CtaSection() {
     const formData = Object.fromEntries(
       new FormData(form).entries()
     ) as Record<string, string>;
-    pushGtmLeadEvent("lead_callback_request", "callback", formData);
+
+    (window as WindowWithLead).fireLead?.({
+      source: "callback_request",
+      content_name: "callback-moon",
+      lead: {
+        nome: formData.nome,
+        email: formData.email,
+        telefone: formData.telefone,
+        empresa: formData.empresa,
+        vertical: formData.vertical,
+      },
+    });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -205,6 +182,7 @@ export function CtaSection() {
                   id="lead-form"
                   ref={leadFormRef}
                   onSubmit={handleLead}
+                  data-lead-no-auto
                   className="w-full max-w-2xl space-y-4"
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
